@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmacy Operations Discovery Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1B3A5C;
+    --mid: #2E6DAD;
+    --light: #D6E8F7;
+    --accent: #5DCAA5;
+    --warm: #F7F4EF;
+    --ink: #1A1A1A;
+    --muted: #6B7280;
+    --border: #E2DDD6;
+    --white: #FFFFFF;
+    --danger: #E05C5C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--dark);
+    color: var(--white);
+    padding: 3rem 1.5rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: rgba(46,109,173,0.25);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(93,202,165,0.15);
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.72);
+    max-width: 480px;
+    margin: 0 auto 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .meta-pill {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mid), var(--accent));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.25rem 4rem;
+  }
+
+  /* ── SECTION ── */
+  .section-block {
+    margin-top: 2.5rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .section-letter {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    color: var(--dark);
+  }
+  .section-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    padding-left: 50px;
+    line-height: 1.55;
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.125rem;
+    margin-bottom: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .q-card.answered {
+    border-color: var(--mid);
+    box-shadow: 0 0 0 3px rgba(46,109,173,0.06);
+  }
+  .q-top {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+  }
+  .q-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--mid);
+    min-width: 22px;
+    padding-top: 3px;
+    letter-spacing: 0.5px;
+  }
+  .q-body { flex: 1; }
+  .q-text {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.55;
+    margin-bottom: 2px;
+  }
+  .q-hint {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .q-btns {
+    display: flex;
+    gap: 8px;
+    margin-top: 11px;
+    padding-left: 33px;
+  }
+  .btn-yn {
+    padding: 5px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+  }
+  .btn-yn:hover { border-color: var(--mid); color: var(--mid); }
+  .btn-yn.yes.active { background: var(--light); border-color: var(--mid); color: var(--dark); }
+  .btn-yn.no.active  { background: #F1EFE8; border-color: #9B9488; color: #3D3A35; }
+  .btn-yn.na.active  { background: #F0F0E8; border-color: #AAAA99; color: #555; }
+
+  .notes-field {
+    width: 100%;
+    margin-top: 10px;
+    font-size: 13px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--warm);
+    color: var(--ink);
+    resize: vertical;
+    min-height: 38px;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .notes-field:focus { outline: none; border-color: var(--mid); }
+
+  /* ── OPEN TEXT ── */
+  .open-section {
+    margin-top: 2.5rem;
+  }
+  .open-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .open-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+  .open-textarea:focus { outline: none; border-color: var(--mid); }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    margin-top: 2rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .contact-section h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .contact-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  @media(max-width:480px){ .input-row { grid-template-columns: 1fr; } }
+  .field-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .field-label { font-size: 12px; font-weight: 500; color: var(--muted); }
+  .field-input {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--warm);
+    transition: border-color 0.2s;
+  }
+  .field-input:focus { outline: none; border-color: var(--mid); }
+
+  /* ── SUBMIT ── */
+  .submit-wrap {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .submit-btn {
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    border-radius: 999px;
+    padding: 14px 40px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.2px;
+  }
+  .submit-btn:hover { background: var(--mid); }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .validation-msg {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--danger);
+    display: none;
+  }
+  .privacy-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 4rem 1.5rem;
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--white);
+    font-size: 28px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .success-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+  .success-screen p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── SCORE CARD ── */
+  .score-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem auto;
+    max-width: 420px;
+    text-align: left;
+  }
+  .score-big {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .score-sub { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
+  .score-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+  .badge-high { background: var(--light); color: var(--dark); }
+  .badge-mid  { background: #FAEEDA; color: #633806; }
+  .badge-low  { background: #F1EFE8; color: #555; }
+  .bar-row { margin-bottom: 8px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .bar-bg { height: 6px; background: var(--border); border-radius: 3px; }
+  .bar-fill { height: 6px; background: linear-gradient(90deg, var(--mid), var(--accent)); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Pre-Build Discovery &nbsp;·&nbsp; Australian Community Pharmacy</div>
+  <h1>Pharmacy Operations<br>Discovery Quiz</h1>
+  <p>52 yes/no questions to help us understand what is actually painful before building anything. No product exists yet. Nothing to buy.</p>
+  <div class="hero-meta">
+    <span class="meta-pill">⏱ ~15 minutes</span>
+    <span class="meta-pill">🔒 Anonymous &amp; confidential</span>
+    <span class="meta-pill">🇦🇺 Australian pharmacy only</span>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">0 / 52</div>
+</div>
+
+<!-- MAIN FORM -->
+<div class="container" id="formWrap">
+<form id="quizForm" novalidate>
+
+<!-- HIDDEN FIELDS FOR FORMSPREE -->
+<!-- REPLACE YOUR_FORMSPREE_ID BELOW WITH YOUR ACTUAL ID -->
+<input type="hidden" name="_subject" value="New Pharmacy Quiz Response">
+<input type="hidden" name="_next" value="">
+
+<!-- ════════════════════════════════════
+     SECTION A — PRACTICE PROFILE
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">A</div>
+    <div class="section-title">Practice profile</div>
+  </div>
+  <div class="section-note">Help us understand the type and scale of your pharmacy. No right or wrong answers.</div>
+
+  <!-- Q1 -->
+  <div class="q-card" id="qc1">
+    <div class="q-top">
+      <span class="q-num">01</span>
+      <div class="q-body">
+        <p class="q-text">Is your pharmacy independently owned (not part of a banner group)?</p>
+        <p class="q-hint">If banner, which group?</p>
+      </div>
+    </div>
+    <div class="q-btns">
+      <button type="button" class="btn-yn yes" onclick="answer(1,'yes',this)">YES</button>
+      <button type="button" class="btn-yn no"  onclick="answer(1,'no',this)">NO</button>
+      <button type="button" class="btn-yn na"  onclick="answer(1,'na',this)">N/A</button>
+    </div>
+    <input type="hidden" name="Q1_IndependentlyOwned" id="a1">
+    <textarea class="notes-field" name="Q1_Notes" placeholder="Notes (optional)..." style="display:none" id="n1"></textarea>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="qc2">
+    <div class="q-top">
+      <span class="q-num">02</span>
+      <div class="q-body">
+        <p class="q-text">Does your pharmacy dispense more than 200 scripts per day on average?</p>
+        <p class="q-hint">Approx. daily volume</p>
+      </div>
+    </div>
+    <div class="q-btns">
+      <button type="button" class="btn-yn yes" onclick="answer(2,'yes',this)">YES</button>
+      <button type="button" class="btn-yn no"  onclick="answer(2,'no',this)">NO</button>
+      <button type="button" class="btn-yn na"  onclick="answer(2,'na',this)">N/A</button>
+    </div>
+    <input type="hidden" name="Q2_200ScriptsPerDay" id="a2">
+    <textarea class="notes-field" name="Q2_Notes" placeholder="Notes (optional)..." style="display:none" id="n2"></textarea>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="qc3">
+    <div class="q-top">
+      <span class="q-num">03</span>
+      <div class="q-body">
+        <p class="q-text">Does your pharmacy offer compounding services?</p>
+        <p class="q-hint">Categories if yes</p>
+      </div>
+    </div>
+    <div class="q-btns">
+      <button type="button" class="btn-yn yes" onclick="answer(3,'yes',this)">YES</button>
+      <button type="button" class="btn-yn no"  onclick="answer(3,'no',this)">NO</button>
+      <button type="button" class="btn-yn na"  onclick="answer(3,'na',this)">N/A</button>
+    </div>
+    <input type="hidden" name="Q3_Compounding" id="a3">
+    <textarea class="notes-field" name="Q3_Notes" placeholder="Notes (optional)..." style="display:none" id="n3"></textarea>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="qc4">
+    <div class="q-top">
+      <span class="q-num">04</span>
+      <div class="q-body">
+        <p class="q-text">Does your pharmacy offer 6CPA services (e.g. MedsCheck, DAA, HMR, vaccinations)?</p>
+        <p class="q-hint">Which services?</p>
+      </div>
+    </div>
+    <div class="q-btns">
+      <button type="button" class="btn-yn yes" onclick="answer(4,'yes',this)">YES</button>
+      <button type="button" class="btn-yn no"  onclick="answer(4,'no',this)">NO</button>
+      <button type="button" class="btn-yn na"  onclick="answer(4,'na',this)">N/A</button>
+    </div>
+    <input type="hidden" name="Q4_6CPA" id="a4">
+    <textarea class="notes-field" name="Q4_Notes" placeholder="Notes (optional)..." style="display:none" id="n4"></textarea>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="qc5">
+    <div class="q-top">
+      <span class="q-num">05</span>
+      <div class="q-body">
+        <p class="q-text">Do you currently use Fred Dispense Plus as your dispensing system?</p>
+        <p class="q-hint">If not, which system?</p>
+      </div>
+    </div>
+    <div class="q-btns">
+      <button type="button" class="btn-yn yes" onclick="answer(5,'yes',this)">YES</button>
+      <button type="button" class="btn-yn no"  onclick="answer(5,'no',this)">NO</button>
+      <button type="button" class="btn-yn na"  onclick="answer(5,'na',this)">N/A</button>
+    </div>
+    <input type="hidden" name="Q5_FredDispense" id="a5">
+    <textarea class="notes-field" name="Q5_Notes" placeholder="Notes (optional)..." style="display:none" id="n5"></textarea>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION B — INTAKE & WORKFLOW
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">B</div>
+    <div class="section-title">Intake &amp; workflow</div>
+  </div>
+  <div class="section-note">How work arrives and moves through your dispensary.</div>
+
+  <div class="q-card" id="qc6"><div class="q-top"><span class="q-num">06</span><div class="q-body"><p class="q-text">Do scripts arrive via more than one channel (e.g. eRx, walk-in, email, fax, phone)?</p><p class="q-hint">List channels</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(6,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(6,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(6,'na',this)">N/A</button></div><input type="hidden" name="Q6" id="a6"><textarea class="notes-field" name="Q6_Notes" placeholder="Notes (optional)..." style="display:none" id="n6"></textarea></div>
+
+  <div class="q-card" id="qc7"><div class="q-top"><span class="q-num">07</span><div class="q-body"><p class="q-text">Do you currently sort and route incoming scripts manually?</p><p class="q-hint">Who does this?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(7,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(7,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(7,'na',this)">N/A</button></div><input type="hidden" name="Q7" id="a7"><textarea class="notes-field" name="Q7_Notes" placeholder="Notes (optional)..." style="display:none" id="n7"></textarea></div>
+
+  <div class="q-card" id="qc8"><div class="q-top"><span class="q-num">08</span><div class="q-body"><p class="q-text">Does your team deal with incomplete or unclear scripts every day?</p><p class="q-hint">Approx. how many per day?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(8,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(8,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(8,'na',this)">N/A</button></div><input type="hidden" name="Q8" id="a8"><textarea class="notes-field" name="Q8_Notes" placeholder="Notes (optional)..." style="display:none" id="n8"></textarea></div>
+
+  <div class="q-card" id="qc9"><div class="q-top"><span class="q-num">09</span><div class="q-body"><p class="q-text">Does resolving an incomplete script typically require a phone call or external chase?</p><p class="q-hint">Avg. time to resolve?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(9,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(9,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(9,'na',this)">N/A</button></div><input type="hidden" name="Q9" id="a9"><textarea class="notes-field" name="Q9_Notes" placeholder="Notes (optional)..." style="display:none" id="n9"></textarea></div>
+
+  <div class="q-card" id="qc10"><div class="q-top"><span class="q-num">10</span><div class="q-body"><p class="q-text">Do scripts or patient requests ever sit in a queue for more than 2 hours before being actioned?</p><p class="q-hint">When / why?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(10,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(10,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(10,'na',this)">N/A</button></div><input type="hidden" name="Q10" id="a10"><textarea class="notes-field" name="Q10_Notes" placeholder="Notes (optional)..." style="display:none" id="n10"></textarea></div>
+
+  <div class="q-card" id="qc11"><div class="q-top"><span class="q-num">11</span><div class="q-body"><p class="q-text">Does your team use tools outside the dispensing system to manage workflow (e.g. spreadsheets, WhatsApp, paper lists)?</p><p class="q-hint">What tools?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(11,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(11,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(11,'na',this)">N/A</button></div><input type="hidden" name="Q11" id="a11"><textarea class="notes-field" name="Q11_Notes" placeholder="Notes (optional)..." style="display:none" id="n11"></textarea></div>
+
+  <div class="q-card" id="qc12"><div class="q-top"><span class="q-num">12</span><div class="q-body"><p class="q-text">Is there a specific time of day when the dispensary workflow most commonly backs up?</p><p class="q-hint">When?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(12,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(12,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(12,'na',this)">N/A</button></div><input type="hidden" name="Q12" id="a12"><textarea class="notes-field" name="Q12_Notes" placeholder="Notes (optional)..." style="display:none" id="n12"></textarea></div>
+
+  <div class="q-card" id="qc13"><div class="q-top"><span class="q-num">13</span><div class="q-body"><p class="q-text">Would you estimate your team spends more than 2 hours per day on tasks that do not require pharmacist clinical judgment?</p><p class="q-hint">Rough estimate?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(13,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(13,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(13,'na',this)">N/A</button></div><input type="hidden" name="Q13" id="a13"><textarea class="notes-field" name="Q13_Notes" placeholder="Notes (optional)..." style="display:none" id="n13"></textarea></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION C — CLINICAL RULES
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">C</div>
+    <div class="section-title">Clinical rules &amp; screening</div>
+  </div>
+  <div class="section-note">How clinical checks are currently performed and where gaps exist.</div>
+
+  <div class="q-card" id="qc14"><div class="q-top"><span class="q-num">14</span><div class="q-body"><p class="q-text">Does a pharmacist currently have to manually pull together patient history before reviewing a complex script?</p><p class="q-hint">How long does this take?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(14,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(14,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(14,'na',this)">N/A</button></div><input type="hidden" name="Q14" id="a14"><textarea class="notes-field" name="Q14_Notes" placeholder="Notes (optional)..." style="display:none" id="n14"></textarea></div>
+
+  <div class="q-card" id="qc15"><div class="q-top"><span class="q-num">15</span><div class="q-body"><p class="q-text">Are drug interaction checks or contraindication screens performed as a separate step from dispensing?</p><p class="q-hint">What tool is used?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(15,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(15,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(15,'na',this)">N/A</button></div><input type="hidden" name="Q15" id="a15"><textarea class="notes-field" name="Q15_Notes" placeholder="Notes (optional)..." style="display:none" id="n15"></textarea></div>
+
+  <div class="q-card" id="qc16"><div class="q-top"><span class="q-num">16</span><div class="q-body"><p class="q-text">Does your team manually check whether a patient is eligible for a 6CPA service before offering it?</p><p class="q-hint">How is eligibility checked?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(16,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(16,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(16,'na',this)">N/A</button></div><input type="hidden" name="Q16" id="a16"><textarea class="notes-field" name="Q16_Notes" placeholder="Notes (optional)..." style="display:none" id="n16"></textarea></div>
+
+  <div class="q-card" id="qc17"><div class="q-top"><span class="q-num">17</span><div class="q-body"><p class="q-text">Are clinical red flags (e.g. S8 alerts, dose thresholds, duplicate therapy) sometimes missed because the check is manual?</p><p class="q-hint">Examples?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(17,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(17,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(17,'na',this)">N/A</button></div><input type="hidden" name="Q17" id="a17"><textarea class="notes-field" name="Q17_Notes" placeholder="Notes (optional)..." style="display:none" id="n17"></textarea></div>
+
+  <div class="q-card" id="qc18"><div class="q-top"><span class="q-num">18</span><div class="q-body"><p class="q-text">Do state-specific rules (e.g. ORT eligibility, staged supply criteria) create confusion or extra checking steps for your team?</p><p class="q-hint">Which rules?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(18,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(18,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(18,'na',this)">N/A</button></div><input type="hidden" name="Q18" id="a18"><textarea class="notes-field" name="Q18_Notes" placeholder="Notes (optional)..." style="display:none" id="n18"></textarea></div>
+
+  <div class="q-card" id="qc19"><div class="q-top"><span class="q-num">19</span><div class="q-body"><p class="q-text">Would a structured pre-check summary ready for the pharmacist before they open a script meaningfully reduce review time?</p><p class="q-hint">Estimated time saved?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(19,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(19,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(19,'na',this)">N/A</button></div><input type="hidden" name="Q19" id="a19"><textarea class="notes-field" name="Q19_Notes" placeholder="Notes (optional)..." style="display:none" id="n19"></textarea></div>
+
+  <div class="q-card" id="qc20"><div class="q-top"><span class="q-num">20</span><div class="q-body"><p class="q-text">Is there a pharmacist on duty at all times a clinical check is required?</p><p class="q-hint">Any coverage gaps?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(20,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(20,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(20,'na',this)">N/A</button></div><input type="hidden" name="Q20" id="a20"><textarea class="notes-field" name="Q20_Notes" placeholder="Notes (optional)..." style="display:none" id="n20"></textarea></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION D — DOCUMENTATION
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">D</div>
+    <div class="section-title">Documentation &amp; claiming</div>
+  </div>
+  <div class="section-note">How consult records, clinical notes, GP correspondence, and 6CPA claims are created and submitted.</div>
+
+  <div class="q-card" id="qc21"><div class="q-top"><span class="q-num">21</span><div class="q-body"><p class="q-text">Do pharmacists currently write consult notes manually for MedsCheck, HMR referrals, or other 6CPA services?</p><p class="q-hint">Time per note?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(21,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(21,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(21,'na',this)">N/A</button></div><input type="hidden" name="Q21" id="a21"><textarea class="notes-field" name="Q21_Notes" placeholder="Notes (optional)..." style="display:none" id="n21"></textarea></div>
+
+  <div class="q-card" id="qc22"><div class="q-top"><span class="q-num">22</span><div class="q-body"><p class="q-text">Are 6CPA claims ever submitted late, incomplete, or missed entirely because of documentation burden?</p><p class="q-hint">How often?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(22,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(22,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(22,'na',this)">N/A</button></div><input type="hidden" name="Q22" id="a22"><textarea class="notes-field" name="Q22_Notes" placeholder="Notes (optional)..." style="display:none" id="n22"></textarea></div>
+
+  <div class="q-card" id="qc23"><div class="q-top"><span class="q-num">23</span><div class="q-body"><p class="q-text">Does your pharmacy send written summaries or referral letters to GPs or specialists?</p><p class="q-hint">How often / how created?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(23,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(23,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(23,'na',this)">N/A</button></div><input type="hidden" name="Q23" id="a23"><textarea class="notes-field" name="Q23_Notes" placeholder="Notes (optional)..." style="display:none" id="n23"></textarea></div>
+
+  <div class="q-card" id="qc24"><div class="q-top"><span class="q-num">24</span><div class="q-body"><p class="q-text">Is GP or referral correspondence created manually from scratch each time?</p><p class="q-hint">Any templates in use?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(24,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(24,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(24,'na',this)">N/A</button></div><input type="hidden" name="Q24" id="a24"><textarea class="notes-field" name="Q24_Notes" placeholder="Notes (optional)..." style="display:none" id="n24"></textarea></div>
+
+  <div class="q-card" id="qc25"><div class="q-top"><span class="q-num">25</span><div class="q-body"><p class="q-text">Do you send SMS or written follow-up messages to patients after a consultation or dispensing event?</p><p class="q-hint">Manual or automated?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(25,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(25,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(25,'na',this)">N/A</button></div><input type="hidden" name="Q25" id="a25"><textarea class="notes-field" name="Q25_Notes" placeholder="Notes (optional)..." style="display:none" id="n25"></textarea></div>
+
+  <div class="q-card" id="qc26"><div class="q-top"><span class="q-num">26</span><div class="q-body"><p class="q-text">Are claim-ready records consistently produced for every eligible service?</p><p class="q-hint">Any known gaps?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(26,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(26,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(26,'na',this)">N/A</button></div><input type="hidden" name="Q26" id="a26"><textarea class="notes-field" name="Q26_Notes" placeholder="Notes (optional)..." style="display:none" id="n26"></textarea></div>
+
+  <div class="q-card" id="qc27"><div class="q-top"><span class="q-num">27</span><div class="q-body"><p class="q-text">Would a tool that auto-drafts consult notes, GP letters, and SMS messages for pharmacist review and approval save meaningful time?</p><p class="q-hint">Hours/week estimate?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(27,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(27,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(27,'na',this)">N/A</button></div><input type="hidden" name="Q27" id="a27"><textarea class="notes-field" name="Q27_Notes" placeholder="Notes (optional)..." style="display:none" id="n27"></textarea></div>
+
+  <div class="q-card" id="qc28"><div class="q-top"><span class="q-num">28</span><div class="q-body"><p class="q-text">Is documentation backlog a reason that eligible 6CPA services are sometimes not claimed?</p><p class="q-hint">Estimated lost revenue/month?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(28,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(28,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(28,'na',this)">N/A</button></div><input type="hidden" name="Q28" id="a28"><textarea class="notes-field" name="Q28_Notes" placeholder="Notes (optional)..." style="display:none" id="n28"></textarea></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION E — OPERATIONS
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">E</div>
+    <div class="section-title">Operations</div>
+  </div>
+  <div class="section-note">Stock management, staffing, prescriber relationships, and admin queues.</div>
+
+  <div class="q-card" id="qc29"><div class="q-top"><span class="q-num">29</span><div class="q-body"><p class="q-text">Does your pharmacy run out of stock on regularly dispensed items more than once per week?</p><p class="q-hint">Which categories?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(29,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(29,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(29,'na',this)">N/A</button></div><input type="hidden" name="Q29" id="a29"><textarea class="notes-field" name="Q29_Notes" placeholder="Notes (optional)..." style="display:none" id="n29"></textarea></div>
+
+  <div class="q-card" id="qc30"><div class="q-top"><span class="q-num">30</span><div class="q-body"><p class="q-text">Is stock ordering currently triggered manually rather than by a system alert?</p><p class="q-hint">Who manages this?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(30,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(30,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(30,'na',this)">N/A</button></div><input type="hidden" name="Q30" id="a30"><textarea class="notes-field" name="Q30_Notes" placeholder="Notes (optional)..." style="display:none" id="n30"></textarea></div>
+
+  <div class="q-card" id="qc31"><div class="q-top"><span class="q-num">31</span><div class="q-body"><p class="q-text">Do you track which prescribers or clinics send you the most scripts?</p><p class="q-hint">How is this tracked?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(31,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(31,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(31,'na',this)">N/A</button></div><input type="hidden" name="Q31" id="a31"><textarea class="notes-field" name="Q31_Notes" placeholder="Notes (optional)..." style="display:none" id="n31"></textarea></div>
+
+  <div class="q-card" id="qc32"><div class="q-top"><span class="q-num">32</span><div class="q-body"><p class="q-text">Do you currently know when a key prescriber's referral volume drops off?</p><p class="q-hint">How do you find out?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(32,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(32,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(32,'na',this)">N/A</button></div><input type="hidden" name="Q32" id="a32"><textarea class="notes-field" name="Q32_Notes" placeholder="Notes (optional)..." style="display:none" id="n32"></textarea></div>
+
+  <div class="q-card" id="qc33"><div class="q-top"><span class="q-num">33</span><div class="q-body"><p class="q-text">Does your pharmacy do any proactive outreach to prescribers or clinics?</p><p class="q-hint">How often / who does it?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(33,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(33,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(33,'na',this)">N/A</button></div><input type="hidden" name="Q33" id="a33"><textarea class="notes-field" name="Q33_Notes" placeholder="Notes (optional)..." style="display:none" id="n33"></textarea></div>
+
+  <div class="q-card" id="qc34"><div class="q-top"><span class="q-num">34</span><div class="q-body"><p class="q-text">Are roster gaps managed manually with no system prompts?</p><p class="q-hint">How far in advance?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(34,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(34,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(34,'na',this)">N/A</button></div><input type="hidden" name="Q34" id="a34"><textarea class="notes-field" name="Q34_Notes" placeholder="Notes (optional)..." style="display:none" id="n34"></textarea></div>
+
+  <div class="q-card" id="qc35"><div class="q-top"><span class="q-num">35</span><div class="q-body"><p class="q-text">Do phone calls with patients, GPs, or suppliers ever go unrecorded or unsummarised?</p><p class="q-hint">How often?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(35,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(35,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(35,'na',this)">N/A</button></div><input type="hidden" name="Q35" id="a35"><textarea class="notes-field" name="Q35_Notes" placeholder="Notes (optional)..." style="display:none" id="n35"></textarea></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION F — GOVERNANCE
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">F</div>
+    <div class="section-title">Governance &amp; compliance</div>
+  </div>
+  <div class="section-note">Audit readiness, QMS documentation, and accountability for clinical decisions.</div>
+
+  <div class="q-card" id="qc36"><div class="q-top"><span class="q-num">36</span><div class="q-body"><p class="q-text">Does your pharmacy have written SOPs for non-routine dispensing steps?</p><p class="q-hint">Where are they stored?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(36,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(36,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(36,'na',this)">N/A</button></div><input type="hidden" name="Q36" id="a36"><textarea class="notes-field" name="Q36_Notes" placeholder="Notes (optional)..." style="display:none" id="n36"></textarea></div>
+
+  <div class="q-card" id="qc37"><div class="q-top"><span class="q-num">37</span><div class="q-body"><p class="q-text">Are SOPs regularly accessed by staff during dispensing, or mainly reviewed at audit time?</p><p class="q-hint">How often accessed?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(37,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(37,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(37,'na',this)">N/A</button></div><input type="hidden" name="Q37" id="a37"><textarea class="notes-field" name="Q37_Notes" placeholder="Notes (optional)..." style="display:none" id="n37"></textarea></div>
+
+  <div class="q-card" id="qc38"><div class="q-top"><span class="q-num">38</span><div class="q-body"><p class="q-text">When a dispensing error or deviation occurs, is there a formal process to record and investigate it?</p><p class="q-hint">System used?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(38,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(38,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(38,'na',this)">N/A</button></div><input type="hidden" name="Q38" id="a38"><textarea class="notes-field" name="Q38_Notes" placeholder="Notes (optional)..." style="display:none" id="n38"></textarea></div>
+
+  <div class="q-card" id="qc39"><div class="q-top"><span class="q-num">39</span><div class="q-body"><p class="q-text">Could you demonstrate in an audit exactly what checks were performed for a given patient encounter and by whom?</p><p class="q-hint">Any gaps?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(39,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(39,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(39,'na',this)">N/A</button></div><input type="hidden" name="Q39" id="a39"><textarea class="notes-field" name="Q39_Notes" placeholder="Notes (optional)..." style="display:none" id="n39"></textarea></div>
+
+  <div class="q-card" id="qc40"><div class="q-top"><span class="q-num">40</span><div class="q-body"><p class="q-text">If an AI tool made a suggestion during dispensing, would you need a record of whether the pharmacist accepted or rejected it?</p><p class="q-hint">Regulatory concern?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(40,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(40,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(40,'na',this)">N/A</button></div><input type="hidden" name="Q40" id="a40"><textarea class="notes-field" name="Q40_Notes" placeholder="Notes (optional)..." style="display:none" id="n40"></textarea></div>
+
+  <div class="q-card" id="qc41"><div class="q-top"><span class="q-num">41</span><div class="q-body"><p class="q-text">Does your pharmacy have a process for reviewing and updating SOPs on a scheduled cycle?</p><p class="q-hint">How often reviewed?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(41,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(41,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(41,'na',this)">N/A</button></div><input type="hidden" name="Q41" id="a41"><textarea class="notes-field" name="Q41_Notes" placeholder="Notes (optional)..." style="display:none" id="n41"></textarea></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION G — SYSTEMS
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">G</div>
+    <div class="section-title">Systems &amp; integration</div>
+  </div>
+  <div class="section-note">Technical landscape and openness to new integrations.</div>
+
+  <div class="q-card" id="qc42"><div class="q-top"><span class="q-num">42</span><div class="q-body"><p class="q-text">Is your dispensing system cloud-hosted (rather than purely on a local server)?</p><p class="q-hint">System name / version?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(42,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(42,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(42,'na',this)">N/A</button></div><input type="hidden" name="Q42" id="a42"><textarea class="notes-field" name="Q42_Notes" placeholder="Notes (optional)..." style="display:none" id="n42"></textarea></div>
+
+  <div class="q-card" id="qc43"><div class="q-top"><span class="q-num">43</span><div class="q-body"><p class="q-text">Have you previously integrated a third-party tool with your dispensing system?</p><p class="q-hint">Which tool? How did it go?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(43,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(43,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(43,'na',this)">N/A</button></div><input type="hidden" name="Q43" id="a43"><textarea class="notes-field" name="Q43_Notes" placeholder="Notes (optional)..." style="display:none" id="n43"></textarea></div>
+
+  <div class="q-card" id="qc44"><div class="q-top"><span class="q-num">44</span><div class="q-body"><p class="q-text">Does your pharmacy use Microsoft 365 or SharePoint for any documents or communication?</p><p class="q-hint">What is stored there?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(44,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(44,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(44,'na',this)">N/A</button></div><input type="hidden" name="Q44" id="a44"><textarea class="notes-field" name="Q44_Notes" placeholder="Notes (optional)..." style="display:none" id="n44"></textarea></div>
+
+  <div class="q-card" id="qc45"><div class="q-top"><span class="q-num">45</span><div class="q-body"><p class="q-text">Do you have concerns about patient data leaving your dispensing system to be processed by a third-party tool?</p><p class="q-hint">Specific concerns?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(45,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(45,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(45,'na',this)">N/A</button></div><input type="hidden" name="Q45" id="a45"><textarea class="notes-field" name="Q45_Notes" placeholder="Notes (optional)..." style="display:none" id="n45"></textarea></div>
+
+  <div class="q-card" id="qc46"><div class="q-top"><span class="q-num">46</span><div class="q-body"><p class="q-text">Would you require a data processing agreement before trialling a new tool?</p><p class="q-hint">Who approves this?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(46,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(46,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(46,'na',this)">N/A</button></div><input type="hidden" name="Q46" id="a46"><textarea class="notes-field" name="Q46_Notes" placeholder="Notes (optional)..." style="display:none" id="n46"></textarea></div>
+
+  <div class="q-card" id="qc47"><div class="q-top"><span class="q-num">47</span><div class="q-body"><p class="q-text">Is there an IT contact or owner who would need to approve a new system integration?</p><p class="q-hint">Who is the decision-maker?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(47,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(47,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(47,'na',this)">N/A</button></div><input type="hidden" name="Q47" id="a47"><textarea class="notes-field" name="Q47_Notes" placeholder="Notes (optional)..." style="display:none" id="n47"></textarea></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION H — VALUE & READINESS
+════════════════════════════════════ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-letter">H</div>
+    <div class="section-title">Value &amp; pilot readiness</div>
+  </div>
+  <div class="section-note">Whether a pilot partnership would be viable and what success looks like.</div>
+
+  <div class="q-card" id="qc48"><div class="q-top"><span class="q-num">48</span><div class="q-body"><p class="q-text">If admin time was reduced by 30–40%, would that time be redirected to patient-facing services or clinical work?</p><p class="q-hint">What specifically?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(48,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(48,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(48,'na',this)">N/A</button></div><input type="hidden" name="Q48" id="a48"><textarea class="notes-field" name="Q48_Notes" placeholder="Notes (optional)..." style="display:none" id="n48"></textarea></div>
+
+  <div class="q-card" id="qc49"><div class="q-top"><span class="q-num">49</span><div class="q-body"><p class="q-text">Would a monthly subscription under $300 be within range for a tool that demonstrably reduces admin time?</p><p class="q-hint">What is the right range?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(49,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(49,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(49,'na',this)">N/A</button></div><input type="hidden" name="Q49" id="a49"><textarea class="notes-field" name="Q49_Notes" placeholder="Notes (optional)..." style="display:none" id="n49"></textarea></div>
+
+  <div class="q-card" id="qc50"><div class="q-top"><span class="q-num">50</span><div class="q-body"><p class="q-text">Are you willing to provide honest feedback on an early-stage product in exchange for priority access at no cost during a pilot?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(50,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(50,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(50,'na',this)">N/A</button></div><input type="hidden" name="Q50" id="a50"><textarea class="notes-field" name="Q50_Notes" placeholder="Notes (optional)..." style="display:none" id="n50"></textarea></div>
+
+  <div class="q-card" id="qc51"><div class="q-top"><span class="q-num">51</span><div class="q-body"><p class="q-text">Is there a specific workflow problem severe enough that you would actively seek out a tool to fix it right now?</p><p class="q-hint">What is it?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(51,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(51,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(51,'na',this)">N/A</button></div><input type="hidden" name="Q51" id="a51"><textarea class="notes-field" name="Q51_Notes" placeholder="Notes (optional)..." style="display:none" id="n51"></textarea></div>
+
+  <div class="q-card" id="qc52"><div class="q-top"><span class="q-num">52</span><div class="q-body"><p class="q-text">Is the decision to trial a new operational tool yours to make, or does it require sign-off from an owner or board?</p><p class="q-hint">Who needs to approve?</p></div></div><div class="q-btns"><button type="button" class="btn-yn yes" onclick="answer(52,'yes',this)">YES</button><button type="button" class="btn-yn no" onclick="answer(52,'no',this)">NO</button><button type="button" class="btn-yn na" onclick="answer(52,'na',this)">N/A</button></div><input type="hidden" name="Q52" id="a52"><textarea class="notes-field" name="Q52_Notes" placeholder="Notes (optional)..." style="display:none" id="n52"></textarea></div>
+</div>
+
+<!-- OPEN TEXT -->
+<div class="open-section">
+  <label class="open-label">Is there anything about your pharmacy's workflow or operational challenges the questions didn't cover?</label>
+  <textarea class="open-textarea" name="OpenComments" placeholder="Any additional context is welcome..."></textarea>
+</div>
+
+<!-- CONTACT (OPTIONAL) -->
+<div class="contact-section" style="margin-top:2rem">
+  <h3>Interested in a pilot? (optional)</h3>
+  <p class="contact-note">If you'd like to be contacted about a no-cost design partner pilot, leave your details below. This is entirely optional and will not be shared.</p>
+  <div class="input-row">
+    <div class="field-wrap">
+      <label class="field-label">Name</label>
+      <input type="text" class="field-input" name="ContactName" placeholder="Your name">
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">Email</label>
+      <input type="email" class="field-input" name="ContactEmail" placeholder="your@email.com">
+    </div>
+  </div>
+  <div class="field-wrap">
+    <label class="field-label">Pharmacy name &amp; suburb (optional)</label>
+    <input type="text" class="field-input" name="PharmacyLocation" placeholder="e.g. Bayside Pharmacy, Brighton">
+  </div>
+</div>
+
+<!-- HIDDEN SCORE FIELDS -->
+<input type="hidden" name="TotalYesAnswers" id="scoreField">
+<input type="hidden" name="AnsweredCount" id="answeredField">
+
+<!-- SUBMIT -->
+<div class="submit-wrap">
+  <button type="submit" class="submit-btn" id="submitBtn">Submit responses</button>
+  <div class="validation-msg" id="valMsg">Please answer all 52 questions before submitting.</div>
+  <p class="privacy-note">All responses are anonymous and confidential. Nothing will be attributed to your pharmacy without explicit permission.</p>
+</div>
+
+</form>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="container success-screen" id="successScreen">
+  <div class="success-icon">✓</div>
+  <h2>Thank you</h2>
+  <p>Your responses have been received. We will be in touch if your pharmacy is a strong fit for the design partner pilot.</p>
+  <div class="score-card" id="scoreCard"></div>
+</div>
+
+<script>
+const TOTAL = 52;
+const answers = {};
+const SECTIONS = [
+  {id:'A',label:'Practice profile',qs:[1,2,3,4,5]},
+  {id:'B',label:'Intake & workflow',qs:[6,7,8,9,10,11,12,13]},
+  {id:'C',label:'Clinical rules & screening',qs:[14,15,16,17,18,19,20]},
+  {id:'D',label:'Documentation & claiming',qs:[21,22,23,24,25,26,27,28]},
+  {id:'E',label:'Operations',qs:[29,30,31,32,33,34,35]},
+  {id:'F',label:'Governance & compliance',qs:[36,37,38,39,40,41]},
+  {id:'G',label:'Systems & integration',qs:[42,43,44,45,46,47]},
+  {id:'H',label:'Value & pilot readiness',qs:[48,49,50,51,52]},
+];
+
+function answer(num, val, btn) {
+  answers[num] = val;
+  // Update hidden field
+  document.getElementById('a'+num).value = val;
+  // Toggle active state on buttons
+  const card = document.getElementById('qc'+num);
+  card.querySelectorAll('.btn-yn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  card.classList.add('answered');
+  // Show notes field
+  document.getElementById('n'+num).style.display = 'block';
+  updateProgress();
+}
+
+function updateProgress() {
+  const count = Object.keys(answers).length;
+  const pct = Math.round((count / TOTAL) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = count + ' / ' + TOTAL;
+}
+
+function buildScoreCard(yes, total) {
+  const pct = Math.round((yes/total)*100);
+  let badgeClass, badgeText;
+  if(yes >= 35){ badgeClass='badge-high'; badgeText='Strong fit — high operational pain across multiple areas'; }
+  else if(yes >= 20){ badgeClass='badge-mid'; badgeText='Moderate fit — clear pain in specific areas'; }
+  else { badgeClass='badge-low'; badgeText='Lower fit — useful market data'; }
+
+  let bars = SECTIONS.map(s => {
+    const sc = s.qs.filter(q=>answers[q]==='yes').length;
+    const mx = s.qs.length;
+    const p = Math.round((sc/mx)*100);
+    return `<div class="bar-row"><div class="bar-label"><span>${s.id}: ${s.label}</span><span>${sc}/${mx}</span></div><div class="bar-bg"><div class="bar-fill" style="width:${p}%"></div></div></div>`;
+  }).join('');
+
+  return `
+    <div class="score-big">${yes}</div>
+    <div class="score-sub">yes answers out of ${total}</div>
+    <span class="score-badge ${badgeClass}">${badgeText}</span>
+    <div style="margin-top:1rem">${bars}</div>`;
+}
+
+document.getElementById('quizForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const count = Object.keys(answers).length;
+  if(count < TOTAL){
+    const msg = document.getElementById('valMsg');
+    msg.style.display = 'block';
+    msg.textContent = `Please answer all ${TOTAL} questions before submitting. (${TOTAL - count} remaining)`;
+    window.scrollTo({top: 0, behavior:'smooth'});
+    return;
+  }
+
+  const yes = Object.values(answers).filter(v=>v==='yes').length;
+  document.getElementById('scoreField').value = yes;
+  document.getElementById('answeredField').value = count;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  // Submit to Formspree — REPLACE YOUR_FORMSPREE_ID with your actual ID
+  const formData = new FormData(this);
+  try {
+    const resp = await fetch(https://formspree.io/f/xjgzyllw), {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    document.getElementById('formWrap').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    document.getElementById('scoreCard').innerHTML = buildScoreCard(yes, TOTAL);
+    window.scrollTo({top:0,behavior:'smooth'});
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = 'Submit responses';
+    document.getElementById('valMsg').style.display = 'block';
+    document.getElementById('valMsg').textContent = 'Submission failed. Please check your connection and try again.';
+  }
+});
+</script>
+
+</body>
+</html>
